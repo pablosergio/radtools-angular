@@ -8,12 +8,12 @@ const settingsApplicationRoutes: Routes = [
    {
     path: '',
     component: SettingsApplicationComponent,
-    children: [
+    /*children: [
       {
         path: '',
         component: GridApplicationComponent
       }
-    ]
+    ]*/
   }
 ];
 
