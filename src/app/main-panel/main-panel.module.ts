@@ -18,6 +18,8 @@ import { MainPanelComponent } from './main-panel.component';
     InputTextModule,
     DataTableModule
   ],
-  declarations: [MainPanelComponent]
+  declarations: [
+    MainPanelComponent
+  ]
 })
 export class MainPanelModule { }

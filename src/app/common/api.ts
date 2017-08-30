@@ -32,6 +32,108 @@ export class LoaderService {
     }
 }
 
+@Injectable()
+export class AuthService {
+  isLoggedIn: boolean;
+
+  // store the URL so we can redirect after logging in
+  redirectUrl: string;
+
+  constructor(private http: Http, private config: AppConfig) {
+    this.isLoggedIn = false;
+  }
+
+  login(username: string, password: string): Observable<any> {
+    return this.http.post(this.config.getEndpoint('login', null), { username: username, password: password })
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+  logout(): void {
+    this.isLoggedIn = false;
+  }
+
+
+  private extractData(res: Response) {
+    const body = res.json();
+    return body || { };
+  }
+
+  private handleError (error: Response | any) {
+    // In a real world app, we might use a remote logging infrastructure
+    let errMsg: string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+    } else {
+      errMsg = error.message ? error.message : error.toString();
+    }
+    console.error(errMsg);
+    /*this.logger.log(errMsg);*/
+    return Observable.throw(errMsg);
+  }
+}
+
+@Injectable()
+export class AuthGuardService implements CanActivate, CanActivateChild, CanLoad {
+  jwtHelper: JwtHelper = new JwtHelper();
+
+  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute, private config: AppConfig) {}
+
+  canLoad(route: Route): boolean {
+    const url = `/${route.path}`;
+    return this.checkLogin(url);
+  }
+
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    const url: string = state.url;
+
+    return this.checkLogin(url);
+  }
+
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    return this.canActivate(route, state);
+  }
+
+  checkLogin(url: string): boolean {
+   const token: string = localStorage.getItem('token');
+   if (token) {
+       if (!this.jwtHelper.isTokenExpired(token)) {
+        return true;
+       }
+   }
+
+    // Store the attempted URL for redirecting
+    this.authService.redirectUrl = url;
+
+    // Navigate to the login page with extras
+    this.router.navigate(['/login']);
+    return false;
+  }
+}
+
+
+@Injectable()
+export class ModalCommunicationService {
+
+  constructor() { }
+  private cancelModal = new Subject();
+  private saveModal = new Subject();
+
+  // Observable string streams
+  btnCancel$ = this.cancelModal.asObservable();
+  btnSave$ = this.saveModal.asObservable();
+
+  // Service message commands
+  btnCancel() {
+    this.cancelModal.next();
+  }
+  btnSave() {
+    this.saveModal.next();
+  }
+}
+
 
 @Injectable()
 export class CommunicationService<T> {
@@ -252,4 +354,16 @@ export class DataTable<T> {
 
     return queryParams;
   }
+}
+
+export function toBoolean(value) {
+    switch (value) {
+        case '':
+            return true;
+        case 'false':
+        case '0':
+            return false;
+        default:
+            return !!value;
+    }
 }
