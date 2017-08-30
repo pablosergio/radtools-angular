@@ -3,7 +3,8 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { AppConfig } from './config/app.config';
 import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
-
+import { LoggerService, LoaderService, CommunicationService, DataService } from './common/api';
+import {SplitButtonModule} from 'primeng/primeng';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -13,11 +14,16 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     HttpModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SplitButtonModule
   ],
  providers: [
     AppConfig,
     { provide: APP_INITIALIZER, useFactory: loadConfig, deps: [AppConfig], multi: true },
+    LoggerService,
+    LoaderService,
+    CommunicationService,
+    DataService
   ],
   bootstrap: [AppComponent]
 })
