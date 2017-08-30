@@ -1,4 +1,4 @@
-<div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+<!--  <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
       <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
       <input #gb type="text" pInputText size="50" placeholder="Global Filter">
         <p-splitButton [style]="{'float':'right'}" label="New" icon="fa-file-o" (onClick)="newRecord()" [model]="items"></p-splitButton>
@@ -25,11 +25,12 @@
         <!--<template pTemplate="header">
          <button type="button" pButton icon="fa-refresh"></button>
         </template>-->
-        <ng-template let-application="rowData" pTemplate="body">
+ <!--        <ng-template let-application="rowData" pTemplate="body">
             <button type="button" pButton (click)="selectApplication(application)" icon="fa-search"></button>
         </ng-template>
       </p-column>
       <p-footer><div style="text-align: left">Selected Application: {{application ? application.name_application: 'none'}}</div></p-footer>
 
   </p-dataTable>
-  
+  <router-outlet></router-outlet>  -->
+
